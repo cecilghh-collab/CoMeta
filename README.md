@@ -7,24 +7,7 @@ scripts reproducing the results reported in the ICDE submission
 *Collaborative Meta-Learning for E-Taxi Charging Pricing in Heterogeneous
 Internet of Energy*.
 
-> **Paper:** *Collaborative Meta-Learning for E-Taxi Charging Pricing in
-> Heterogeneous Internet of Energy* (ICDE, under review) — reproduced from
-> the anonymized manuscript. Datasets are shared with the sibling DBCNet
-> reproduction (`../dbcnet_repro/data`): NYC TLC trip records + NYC EV
-> Fleet Station Network (63 zones / 40 FCS), and the Shenzhen Urban Data
-> Release + STEVCDP infrastructure (491 zones / 100 FCS).
-
 ---
-
-## Overview
-
-Charging pricing for e-taxis sits at the intersection of two coupled markets:
-the **charging market** and the **ride-hailing market**, which compete for the
-same fleet of vehicles. CoMeta prices charging services offered by **fixed
-charging stations (FCSs)** and **mobile charging stations (MCSs)** while
-explicitly accounting for the cross-market externality that charging decisions
-impose on ride-hailing supply.
-
 CoMeta consists of four tightly coupled components:
 
 1. **Cross-market Stackelberg Markov game** — the platform (leader) acts as
@@ -144,78 +127,7 @@ python scripts/train.py --config shenzhen --meta-iters 400 --eval-every 20 \
 **Evaluate overall performance** (CoMeta vs. baselines; Table I):
 
 ```bash
-python scripts/run_baselines.py --config nyc --train-episodes 40
 python scripts/evaluate.py --config nyc
-```
-
-**Fast adaptation on held-out tasks** (unseen event days / extreme weather):
-
-```bash
-python scripts/adaptation.py --config nyc --which steps
-python scripts/adaptation.py --config nyc --which stream
-```
-
-**Convergence and exploitability analysis**:
-
-```bash
-python scripts/convergence.py --config nyc --which exploit
-python scripts/convergence.py --config nyc --which curves
-```
-
-**Scalability and gap distribution** (Shenzhen sweeps, Fig. 6-8):
-
-```bash
-python scripts/scalability.py --which sz-sweeps
-python scripts/scalability.py --config nyc --which gap
-```
-
-**Ablations** (Table II):
-
-```bash
-python scripts/ablation.py --config nyc --meta-iters 200
-python scripts/ablation.py --config shenzhen --meta-iters 150
-```
-
-**Paper figures**: `python scripts/paper_figures.py` regenerates every
-figure/table of the paper as PDFs in `results/paper/`.
-
-## Key Configuration
-
-| Parameter | Meaning | Default |
-|---|---|---|
-| `H` | pricing decision interval | every 5-min slot |
-| `K` | inner-loop adaptation steps | 3 |
-| `N_p` | prompt pool size | 16 |
-| `gamma` | stage-level discount | 0.99 |
-| `lr_follower` / `lr_platform` | learning rates | 3e-4 / 1e-4 (paper) |
-| `meta_batch` | tasks per meta-update | 8 (paper 16) |
-| `defer_w0/w1`, `xi_cap` | opportunity-cost deferral (v2 mechanism) | 0.4 / 1.2 / 1.5 |
-| `mcs_premium_init` | MCS price-head init (× base price) | 1.25 (NYC opt) |
-| `w_cross` | cross-market (Shapley) weight | 0.1 fixed |
-
-## Reproducing the Paper Results
-
-| Result | Script |
-|---|---|
-| Table I (overall performance) | `scripts/run_baselines.py` + `scripts/evaluate.py` |
-| Table II (ablations) | `scripts/ablation.py` + `scripts/evaluate.py --tag ...` |
-| Fig. 3 (fast adaptation, task stream) | `scripts/adaptation.py` + `scripts/paper_figures.py` |
-| Fig. 4 + Table III (convergence, exploitability) | `scripts/convergence.py` |
-| Fig. 5 (cross-market Pareto) | `train.py --w-cross-final {0.1,0.3,0.5}` + `paper_figures.py` |
-| Fig. 6-7 (fleet / MCS scalability) | `scripts/scalability.py --which sz-sweeps` |
-| Fig. 8 (supply-demand gap) | `scripts/scalability.py --which gap` |
-
-## Citation
-
-```bibtex
-@inproceedings{cometa,
-  title  = {Collaborative Meta-Learning for E-Taxi Charging Pricing in
-            Heterogeneous Internet of Energy},
-  author = {[anonymized]},
-  booktitle = {Proceedings of the IEEE International Conference on
-               Data Engineering (ICDE)},
-  note   = {reproduced implementation},
-}
 ```
 
 ## License
